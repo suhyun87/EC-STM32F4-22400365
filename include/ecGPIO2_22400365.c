@@ -109,3 +109,62 @@ uint32_t GPIO_read(PinName_t pinName){
 
   return val;
 }
+
+static PinName_t _fndPins[8];
+static PinName_t _fndSel[4];
+
+//Each led that has to light up gets a 1, every other led gets a 0
+//its in order  { (a,b,c,d,e,f,g,dp) }
+int numberFND[12][8]={
+                    {1,1,1,1,1,1,0,0},          //zero
+                    {0,1,1,0,0,0,0,0},          //one
+                    {1,1,0,1,1,0,1,0},          //two
+                    {1,1,1,1,0,0,1,0},
+										{0,1,1,0,0,1,1,0},
+										{1,0,1,1,0,1,1,0},
+										{1,0,1,1,1,1,1,0},
+										{1,1,1,0,0,1,0,0},
+                    {1,1,1,1,1,1,1,0},
+                    {1,1,1,1,0,1,1,0},
+                    {0,0,0,0,0,0,0,1},          //dot
+                   	{0,0,0,0,0,0,0,0}		      //blank
+                  };
+                  
+
+// Initialize DOUT pins for 7 segment leds
+void FND_init(PinName_t *pinFND){
+	for (int i=0; i<8; i++){
+		_fndPins[i] = pinFND[i];
+		GPIO_init(_fndPins[i], OUTPUT);
+	}
+}
+
+// Initialize select pins (FND0~FND3) as DOUT
+void FND_select_init(PinName_t *selectFND){	
+    for(int i=0; i<4; i++) {
+			_fndSel[i] = selectFND[i];
+			GPIO_init(_fndSel[i], OUTPUT);
+		}
+}
+
+// Display a number 0 - 9 only
+void FND_display(uint8_t num){
+		for(int i = 0; i<8;i++){
+			GPIO_write(_fndPins[i], numberFND[num][i]);
+		}
+}
+
+// Select display: FND0 to FND3
+void FND_select(uint8_t digit){
+    for(int i = 0; i < 4; i++){
+        GPIO_write(_fndSel[i], (i == digit) ? HIGH : LOW);
+		}
+}
+
+void led_toggle(PinName_t pinName){
+	GPIO_TypeDef *Port;    
+	unsigned int pin;
+	ecPinmap(pinName,&Port,&pin);
+    
+	Port->ODR ^= (1UL << pin);
+}

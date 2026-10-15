@@ -24,7 +24,7 @@ Description      : GPIO Library. Distributed to Students for LAB_GPIO
 #define LOW  0
 
 #define LED_PIN 	PA_5
-#define BUTTON_PIN  PC_13
+#define BUTTON_PIN  PA_13
 
 /*---------------------------------------------------------------- 
                     [EXERCISE]
@@ -63,6 +63,16 @@ uint32_t  GPIO_read(PinName_t pinName);
 void pinMode(PinName_t pin, uint32_t mode);
 void digitalWrite(PinName_t pin, uint32_t value);
 uint32_t  digitalRead(PinName_t pin);
+
+// FND for JKIT board 
+extern int numberFND[12][8];
+void FND_init(PinName_t *pinFND);
+void FND_select_init(PinName_t *selectFND);
+void FND_display(uint8_t num);
+void FND_select(uint8_t digit);
+
+void led_toggle(PinName_t pinName);
+
 
 
 #ifdef __cplusplus
